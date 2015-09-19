@@ -3,6 +3,19 @@
 /* the original file seems to be a compability layer for NaCL */
 /* This here is for direct tweetnacl usage */
 
+#ifdef __cplusplus
+#include <cstdint>
+#else
+#include <stdint.h>
+#endif
+
+typedef uint8_t  u8;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int64_t  i64;
+typedef i64 gf[16];
+
+
 #define crypto_box_SECRETKEYBYTES 32
 #define crypto_box_BOXZEROBYTES 16
 #define crypto_box_NONCEBYTES 24
@@ -13,12 +26,6 @@
 #define crypto_secretbox_NONCEBYTES 24
 #define crypto_secretbox_ZEROBYTES 32
 #define crypto_secretbox_BOXZEROBYTES 16
-
-typedef unsigned char u8;
-typedef unsigned long u32;
-typedef unsigned long long u64;
-typedef long long i64;
-typedef i64 gf[16];
 
 #ifdef __cplusplus
 extern "C" {
