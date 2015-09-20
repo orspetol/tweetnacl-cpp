@@ -82,7 +82,7 @@ sv ts64(u8 *x,u64 u)
     }
 }
 
-static int vn(const u8 *x,const u8 *y,int n)
+static int vn(const u8 *x,const u8 *y,u32 n)
 {
     u32 i,d = 0;
     FORn(i,n) {
@@ -869,7 +869,7 @@ sv reduce(u8 *r)
     modL(r,x);
 }
 
-int crypto_sign(u8 *sm,u64 *smlen,const u8 *m,u64 n,const u8 *sk)
+int crypto_sign(u8 *sm,u64 *smlen,const u8 *m,i64 n,const u8 *sk)
 {
     u8 d[64],h[64],r[64];
     i64 i,j,x[64];
