@@ -170,7 +170,7 @@ static const u8 sigma[16] = {'e','x','p','a','n','d',' ','3','2','-','b','y','t'
 int crypto_stream_salsa20_xor(u8 *c,const u8 *m,u64 b,const u8 *n,const u8 *k)
 {
     u8 z[16],x[64];
-    u32 u,i;
+    u64 u,i;
     if (!b) return 0;
     FOR(i,16) {
         z[i] = 0;
@@ -953,7 +953,7 @@ static int unpackneg(gf r[4],const u8 p[32])
 
 int crypto_sign_open(u8 *m,u64 *mlen,const u8 *sm,u64 n,const u8 *pk)
 {
-    int i;
+    u64 i;
     u8 t[32],h[64];
     gf p[4],q[4];
 
