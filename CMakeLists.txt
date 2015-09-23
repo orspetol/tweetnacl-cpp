@@ -13,7 +13,12 @@ file(GLOB cpp src/*.cpp)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${fpic} -std=c++14 -Wall -Wextra")
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 add_library(tweetnacl   STATIC ${h} ${c})
 add_library(tweetnacl++ STATIC ${h} ${cpp})
 
+
+add_subdirectory(test)
