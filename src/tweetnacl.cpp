@@ -465,7 +465,7 @@ sv set25519(gf r, const gf a)
 
 sv car25519(gf o)
 {
-    i64 c;
+    u64 c;
     FORu(i,16) {
         o[i]+=(1LL<<16);
         c=o[i]>>16;
