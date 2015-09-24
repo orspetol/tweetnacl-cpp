@@ -1,47 +1,71 @@
 #pragma once
 
-
-#ifdef __cplusplus
 #include <cstdint>
-#else
-#include <stdint.h>
-#endif
 
 typedef uint8_t  u8;
 typedef uint32_t u32;
 typedef uint64_t u64;
 typedef int64_t  i64;
-typedef i64 gf[16];
 
 
-#define crypto_box_SECRETKEYBYTES 32
-#define crypto_box_BOXZEROBYTES 16
-#define crypto_box_NONCEBYTES 24
-#define crypto_box_ZEROBYTES 32
-#define crypto_box_PUBLICKEYBYTES 32
-#define crypto_box_BEFORENMBYTES 32
-#define crypto_secretbox_KEYBYTES 32
-#define crypto_secretbox_NONCEBYTES 24
-#define crypto_secretbox_ZEROBYTES 32
-#define crypto_secretbox_BOXZEROBYTES 16
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-int crypto_box_keypair(u8 *y,u8 *x);
-int crypto_box_afternm(u8 *c,const u8 *m,u64 d,const u8 *n,const u8 *k);
+template<class T, int N>
+struct crypto_array;
 
 
-int crypto_box_open_afternm(u8 *m,const u8 *c,u64 d,const u8 *n,const u8 *k);
-int crypto_box(u8 *c,const u8 *m,u64 d,const u8 *n,const u8 *y,const u8 *x);
-int crypto_box_open(u8 *m,const u8 *c,u64 d,const u8 *n,const u8 *y,const u8 *x);
-int crypto_box_beforenm(u8 *k,const u8 *y,const u8 *x);
-int crypto_secretbox(u8 *c,const u8 *m,u64 d,const u8 *n,const u8 *k);
-int crypto_secretbox_open(u8 *m,const u8 *c,u64 d,const u8 *n,const u8 *k);
+template<class T>
+struct crypto_array<T, 0>
+{
+    crypto_array() {}
+    crypto_array(T* t, u64 s) : p(t), n(s) {}
 
-#ifdef __cplusplus
-}
-#endif
+    T*const p = nullptr;
+    u64 n = 0;
+
+    T& operator[](u64 i)       { return p[i]; }
+    T  operator[](u64 i) const { return p[i]; }
+
+    const crypto_array operator+(int i) const { return crypto_array(p + i, n - i);  }
+};
+
+
+template<class T, int N>
+struct crypto_array
+{
+    enum { Size = N };
+
+    crypto_array() : ptr(data) {}
+    template<int M>
+    crypto_array(const crypto_array<T,M> rhs) : ptr(const_cast<crypto_array<T,M>*>(&rhs)->p()) { static_assert(M >= N, "could not downgrade"); }
+
+    T& operator[](int i)       { return ptr[i]; }
+    T  operator[](int i) const { return ptr[i];  }
+
+    const crypto_array operator+(int i) const { return crypto_array(ptr + i);  }
+
+    T* p() { return &ptr[0]; }
+    crypto_array<T,0> t0() const { return crypto_array<T,0>(ptr, N); }
+    static crypto_array wrap(const T* ptr) { return crypto_array(const_cast<T*>(ptr)); }
+
+private:
+    crypto_array(T* ptr) : ptr(ptr) {}
+    T data[N] = {0};
+    T*const ptr;
+};
+
+
+typedef crypto_array<u8, 0> Message;
+typedef crypto_array<u8, 32> Key;
+typedef crypto_array<u8, 24> Nonce;
+
+
+int crypto_box_keypair      (Key *pk, Key *sk);
+int crypto_box_afternm      (Message &c, const Message &m, const Nonce &n, const Key &k);
+int crypto_box_open_afternm (Message &m, const Message &c, const Nonce &n, const Key &k);
+int crypto_box              (Message &c, const Message &m, const Nonce &n, const Key &y, const Key &x);
+int crypto_box_open         (Message &m, const Message &c, const Nonce &n, const Key &y, const Key &x);
+int crypto_box_beforenm     (Key &k, const Key &y, const Key &x);
+int crypto_secretbox        (Message &c, const Message &m, const Nonce &n, const Key &k);
+int crypto_secretbox_open   (Message &m, const Message &c, const Nonce &n, const Key &k);
+
 
 
