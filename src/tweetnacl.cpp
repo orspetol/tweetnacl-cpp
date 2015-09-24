@@ -928,7 +928,7 @@ sv scalarbase(gf p[4], const B64 &s)
     scalarmult(p,q,s);
 }
 
-si crypto_sign_keypair(Key &pk, Key &sk)
+si crypto_sign_keypair(Key &pk, B64 &sk)
 {
     B64 d;
     gf p[4];
@@ -942,12 +942,11 @@ si crypto_sign_keypair(Key &pk, Key &sk)
     scalarbase(p,d);
     pack(pk,p);
 
-    /* TODO
     FOR(i,32) {
         sk[32 + i] = pk[i];
         CHKSIZE(32+i);
     }}, sk);
-    */
+
     return 0;
 }
 
